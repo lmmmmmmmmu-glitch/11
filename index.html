@@ -3,60 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>稳定版异地无服务器聊天</title>
+    <title>纯点对点异地聊天（100%可用）</title>
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-main: #fff;
-            --bg-light: #f7f8fa;
-            --text: #333;
-            --text-gray: #999;
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --success: #16a34a;
-            --danger: #dc2626;
-            --border: #eaeaea;
+            --white: #fff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-600: #6c757d;
+            --gray-900: #212529;
+            --blue-500: #0d6efd;
+            --blue-600: #0a58ca;
+            --green-500: #198754;
+            --red-500: #dc3545;
+            --yellow-500: #ffc107;
             --radius: 8px;
-            --gap: 10px;
-            --pad: 12px;
-            --transition: all 0.2s ease;
+            --gap: 12px;
+            --pad: 15px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
-            background: #f2f3f5;
+            background: var(--gray-100);
             min-height: 100vh;
-            padding: 8px;
+            padding: 10px;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
-            background: var(--bg-main);
-            border: 1px solid var(--border);
+            background: var(--white);
             border-radius: var(--radius);
+            box-shadow: var(--shadow);
             overflow: hidden;
-            height: calc(100vh - 16px);
+            height: calc(100vh - 20px);
             display: flex;
             flex-direction: column;
         }
 
         .header {
             padding: var(--pad);
-            border-bottom: 1px solid var(--border);
+            background: var(--blue-500);
+            color: var(--white);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .title {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -64,55 +67,56 @@
         }
 
         .status {
-            font-size: 12px;
+            font-size: 13px;
             padding: 4px 10px;
             border-radius: 20px;
-            background: var(--bg-light);
+            background: rgba(255,255,255,0.2);
         }
 
-        .status.ready { color: var(--primary); background: rgba(37, 99, 235, 0.1); }
-        .status.connected { color: var(--success); background: rgba(22, 163, 74, 0.1); }
-        .status.reconnecting { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
-        .status.error { color: var(--danger); background: rgba(220, 38, 38, 0.1); }
-
-        .room {
+        .setup {
             padding: var(--pad);
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--gray-200);
             display: flex;
             flex-wrap: wrap;
             gap: var(--gap);
             align-items: center;
         }
 
-        .input-box {
+        .input-wrap {
             flex: 1;
-            min-width: 190px;
+            min-width: 250px;
         }
 
         .label {
             font-size: 12px;
-            color: var(--text-gray);
-            margin-bottom: 4px;
+            color: var(--gray-600);
+            margin-bottom: 6px;
             display: block;
+            font-weight: 500;
         }
 
-        .input {
+        .input, .textarea {
             width: 100%;
-            padding: 9px 12px;
-            border: 1px solid var(--border);
+            padding: 10px 12px;
+            border: 1px solid var(--gray-300);
             border-radius: var(--radius);
             outline: none;
             font-size: 14px;
-            transition: var(--transition);
+            transition: border 0.2s;
         }
 
-        .input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        .input:focus, .textarea:focus {
+            border-color: var(--blue-500);
+        }
+
+        .textarea {
+            min-height: 80px;
+            resize: none;
+            font-family: monospace;
         }
 
         .btn {
-            padding: 9px 15px;
+            padding: 10px 20px;
             border: none;
             border-radius: var(--radius);
             font-size: 14px;
@@ -120,30 +124,36 @@
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
-            transition: var(--transition);
+            gap: 8px;
+            transition: background 0.2s;
+            white-space: nowrap;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: #fff;
+        .btn-blue {
+            background: var(--blue-500);
+            color: var(--white);
         }
 
-        .btn-primary:hover {
-            background: var(--primary-hover);
+        .btn-blue:hover {
+            background: var(--blue-600);
         }
 
-        .btn-success {
-            background: var(--success);
-            color: #fff;
+        .btn-green {
+            background: var(--green-500);
+            color: var(--white);
         }
 
-        .btn-success:disabled {
-            background: var(--text-gray);
+        .btn-green:disabled {
+            background: var(--gray-300);
             cursor: not-allowed;
         }
 
-        .chat {
+        .btn-red {
+            background: var(--red-500);
+            color: var(--white);
+        }
+
+        .chat-area {
             flex: 1;
             padding: var(--pad);
             display: flex;
@@ -156,24 +166,24 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
             margin-bottom: var(--gap);
         }
 
         .messages::-webkit-scrollbar {
-            width: 4px;
+            width: 5px;
         }
 
         .messages::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 2px;
+            background: var(--gray-300);
+            border-radius: 5px;
         }
 
         .msg {
             max-width: 80%;
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 4px;
         }
 
         .msg-self {
@@ -185,26 +195,26 @@
         }
 
         .msg-content {
-            padding: 10px 14px;
+            padding: 12px 16px;
             border-radius: var(--radius);
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .msg-self .msg-content {
-            background: var(--primary);
-            color: #fff;
-            border-bottom-right-radius: 3px;
+            background: var(--blue-500);
+            color: var(--white);
+            border-bottom-right-radius: 4px;
         }
 
         .msg-other .msg-content {
-            background: var(--bg-light);
-            border-bottom-left-radius: 3px;
+            background: var(--gray-100);
+            border-bottom-left-radius: 4px;
         }
 
         .msg-time {
             font-size: 11px;
-            color: var(--text-gray);
+            color: var(--gray-600);
             align-self: flex-end;
         }
 
@@ -213,10 +223,10 @@
         }
 
         .media {
-            max-width: 220px;
+            max-width: 250px;
             border-radius: var(--radius);
             overflow: hidden;
-            border: 1px solid var(--border);
+            border: 1px solid var(--gray-200);
         }
 
         .media-img, .media-video {
@@ -226,15 +236,15 @@
         }
 
         .media-video {
-            max-height: 300px;
+            max-height: 320px;
             object-fit: cover;
         }
 
-        .input-area {
+        .input-bar {
             display: flex;
-            gap: var(--gap);
+            gap: 10px;
             align-items: center;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--gray-200);
             padding-top: var(--pad);
         }
 
@@ -242,42 +252,40 @@
             display: none;
         }
 
-        .icon {
-            font-size: 19px;
-            color: var(--text-gray);
+        .icon-btn {
+            font-size: 20px;
+            color: var(--gray-600);
             cursor: pointer;
-            padding: 7px;
+            padding: 8px;
             border-radius: var(--radius);
-            transition: var(--transition);
+            transition: all 0.2s;
         }
 
-        .icon:hover {
-            color: var(--primary);
-            background: var(--bg-light);
+        .icon-btn:hover {
+            color: var(--blue-500);
+            background: var(--gray-100);
         }
 
-        .msg-input {
+        .chat-input {
             flex: 1;
-            padding: 9px 12px;
-            border: 1px solid var(--border);
+            padding: 10px 12px;
+            border: 1px solid var(--gray-300);
             border-radius: var(--radius);
             outline: none;
             font-size: 14px;
             resize: none;
-            height: 38px;
+            height: 42px;
             max-height: 120px;
             overflow-y: auto;
-            background: var(--bg-light);
         }
 
-        .msg-input:focus {
-            background: var(--bg-main);
-            border-color: var(--primary);
+        .chat-input:focus {
+            border-color: var(--blue-500);
         }
 
         .send-btn {
-            width: 38px;
-            height: 38px;
+            width: 42px;
+            height: 42px;
             padding: 0;
             display: flex;
             align-items: center;
@@ -290,11 +298,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.15);
+            background: rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10;
+            z-index: 99;
             display: none;
         }
 
@@ -303,30 +311,32 @@
         }
 
         .call-card {
-            background: var(--bg-main);
-            border: 1px solid var(--border);
+            background: var(--white);
             border-radius: var(--radius);
-            padding: 22px;
-            min-width: 260px;
+            padding: 25px;
+            min-width: 280px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 18px;
+            gap: 20px;
+            box-shadow: var(--shadow);
         }
 
         .call-title {
-            font-size: 16px;
-            font-weight: 500;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--gray-900);
         }
 
+        /* 响应式 */
         @media (max-width: 768px) {
             .container {
                 height: 100vh;
                 border-radius: 0;
-                border: none;
+                box-shadow: none;
             }
 
-            .room {
+            .setup {
                 flex-direction: column;
                 align-items: stretch;
             }
@@ -336,82 +346,106 @@
             }
 
             .media {
-                max-width: 180px;
+                max-width: 200px;
             }
         }
 
-        @media (max-width: 420px) {
+        @media (max-width: 450px) {
             .header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 8px;
+                gap: 10px;
             }
 
-            .chat {
+            .pad {
                 padding: 10px;
+            }
+
+            .btn {
+                padding: 10px 15px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- 头部 -->
         <div class="header">
             <div class="title">
-                <i class="fas fa-comments"></i> 稳定版异地聊天
+                <i class="fas fa-handshake"></i> 纯点对点异地聊天
             </div>
-            <div class="status" id="status">准备就绪</div>
+            <div class="status" id="status">未建立连接</div>
         </div>
 
-        <div class="room">
-            <div class="input-box">
-                <label class="label">专属房间号（双方必须一致）</label>
-                <input type="text" class="input" id="roomCode" placeholder="如：8888、mychat">
+        <!-- 核心配置区：生成/粘贴邀请码 -->
+        <div class="setup">
+            <div class="input-wrap">
+                <label class="label">👉 方式1：生成邀请码（你作为发起方）</label>
+                <button class="btn btn-blue" onclick="generateOffer()">
+                    <i class="fas fa-qrcode"></i> 生成邀请码
+                </button>
             </div>
-            <button class="btn btn-primary" onclick="startChat()">
-                <i class="fas fa-plug"></i> 开始连接
-            </button>
-            <button class="btn btn-success" id="callBtn" disabled onclick="startCall()">
-                <i class="fas fa-phone"></i> 通话
-            </button>
+            <div class="input-wrap">
+                <label class="label">👉 方式2：粘贴对方的邀请码（你作为接收方）</label>
+                <textarea class="textarea" id="offerInput" placeholder="把对方发你的邀请码粘贴到这里，然后点击「加入连接」"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-green" onclick="answerOffer()">
+                    <i class="fas fa-sign-in"></i> 加入连接
+                </button>
+                <button class="btn btn-red" onclick="resetAll()">
+                    <i class="fas fa-refresh"></i> 重置
+                </button>
+                <button class="btn btn-green" id="callBtn" disabled onclick="startCall()">
+                    <i class="fas fa-phone"></i> 通话
+                </button>
+            </div>
         </div>
 
-        <div class="chat">
+        <!-- 聊天区域 -->
+        <div class="chat-area">
             <div class="messages" id="messages"></div>
 
-            <div class="input-area">
-                <label for="fileInput" class="icon">
+            <!-- 输入栏 -->
+            <div class="input-bar">
+                <label for="filePicker" class="icon-btn">
                     <i class="fas fa-paperclip"></i>
                 </label>
-                <input type="file" id="fileInput" class="file-input" accept="image/*,video/*">
-                <textarea class="msg-input" id="msgInput" placeholder="回车发送，Shift+回车换行" onkeydown="if(event.keyCode===13&&!event.shiftKey){sendMsg();event.preventDefault();}"></textarea>
-                <button class="btn btn-primary send-btn" onclick="sendMsg()">
+                <input type="file" id="filePicker" class="file-input" accept="image/*,video/*">
+                <textarea class="chat-input" id="msgInput" placeholder="回车发送，Shift+回车换行" onkeydown="if(event.keyCode===13&&!event.shiftKey){sendMessage();event.preventDefault();}"></textarea>
+                <button class="btn btn-blue send-btn" onclick="sendMessage()">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- 通话弹窗 -->
     <div class="call-modal" id="callModal">
         <div class="call-card">
-            <div class="call-title" id="callTitle">正在通话</div>
-            <button class="btn btn-danger" onclick="endCall()">
-                <i class="fas fa-phone-slash"></i> 挂断
+            <div class="call-title">正在通话中</div>
+            <button class="btn btn-red" onclick="endCall()">
+                <i class="fas fa-phone-slash"></i> 挂断通话
+            </button>
+        </div>
+    </div>
+
+    <!-- 邀请码弹窗 -->
+    <div class="call-modal" id="offerModal">
+        <div class="call-card">
+            <div class="call-title">你的邀请码（发给对方）</div>
+            <textarea class="textarea" id="offerCode" style="min-height: 120px; font-size: 12px;"></textarea>
+            <button class="btn btn-blue" onclick="copyOffer()">
+                <i class="fas fa-copy"></i> 复制邀请码
             </button>
         </div>
     </div>
 
     <script>
         /**************************
-         * 核心优化：多备用公共信令服务器（解决断开问题）
+         * 核心配置：纯点对点，无任何服务器
          **************************/
         const CONFIG = {
-            // 备用信令服务器列表（按优先级排序，自动切换）
-            SIGNAL_SERVERS: [
-                'wss://ws.postman-echo.com/raw', // 稳定级公共服务
-                'wss://echo.websocket.org',      // 经典公共回声服务
-                'wss://ws.ifelse.io',            // 轻量公共服务
-                'wss://echo.websocket.events'    // 兜底服务
-            ],
             RTC: {
                 iceServers: [
                     { urls: 'stun:stun.l.google.com:19302' },
@@ -420,201 +454,170 @@
                     { urls: 'stun:stun.qq.com:3478' }
                 ]
             },
-            MEDIA: { audio: true, video: false },
-            RECONNECT_INTERVAL: 3000, // 断线重连间隔（3秒）
-            CURRENT_SERVER_INDEX: 0   // 当前使用的信令服务器索引
+            MEDIA: { audio: true, video: false }
         };
 
         /**************************
          * 全局变量
          **************************/
-        let ws = null;
         let peerConn = null;
         let dataChannel = null;
         let localStream = null;
-        let roomCode = '';
         let isConnected = false;
         let isCalling = false;
-        let reconnectTimer = null; // 重连定时器
 
         /**************************
          * 页面初始化
          **************************/
         window.onload = () => {
-            updateStatus('准备就绪，输入房间号开始', 'ready');
+            updateStatus('未建立连接，选择「生成邀请码」或「粘贴对方邀请码」');
             initFileInput();
-            // 页面关闭时清理连接
-            window.onbeforeunload = () => {
-                clearTimeout(reconnectTimer);
-                closeAllConnections();
-            };
         };
 
         /**************************
-         * 1. 核心：开始连接（自动切换信令服务器）
+         * 核心1：生成邀请码（发起方）
          **************************/
-        function startChat() {
-            roomCode = document.getElementById('roomCode').value.trim();
-            if (!roomCode || roomCode.length < 2) {
-                alert('请输入至少2位的房间号，双方必须完全一致！');
-                return;
-            }
+        async function generateOffer() {
+            // 重置旧连接
+            resetAll();
 
-            // 清理旧连接
-            closeAllConnections();
-            clearTimeout(reconnectTimer);
-
-            updateStatus(`正在连接 [${roomCode}]，请稍候...`, 'ready');
-            document.getElementById('callBtn').disabled = true;
-            isConnected = false;
-
-            // 开始连接（从第一个信令服务器开始）
-            CONFIG.CURRENT_SERVER_INDEX = 0;
-            connectSignalServer();
-        }
-
-        /**************************
-         * 2. 连接信令服务器（自动切换备用）
-         **************************/
-        function connectSignalServer() {
-            // 超出备用列表，停止重连
-            if (CONFIG.CURRENT_SERVER_INDEX >= CONFIG.SIGNAL_SERVERS.length) {
-                updateStatus('所有信令服务器都无法连接，请稍后再试', 'error');
-                return;
-            }
-
-            const currentServer = CONFIG.SIGNAL_SERVERS[CONFIG.CURRENT_SERVER_INDEX];
-            updateStatus(`正在连接信令服务器 [${CONFIG.CURRENT_SERVER_INDEX + 1}/${CONFIG.SIGNAL_SERVERS.length}]`, 'ready');
-
-            ws = new WebSocket(currentServer);
-
-            // 连接成功
-            ws.onopen = () => {
-                clearTimeout(reconnectTimer);
-                updateStatus(`信令已连接，等待对方加入 [${roomCode}]`, 'ready');
-                // 发送房间标识
-                ws.send(JSON.stringify({ type: 'join', room: roomCode, ts: new Date().getTime() }));
-                // 初始化WebRTC
-                initRTC();
-            };
-
-            // 接收信令消息
-            ws.onmessage = async (e) => {
-                try {
-                    // 过滤空消息/非JSON消息
-                    if (!e.data || e.data === 'pong') return;
-                    const data = JSON.parse(e.data);
-                    if (!data || data.room !== roomCode) return;
-
-                    // 处理SDP/ICE
-                    if (data.sdp) {
-                        await peerConn.setRemoteDescription(new RTCSessionDescription(data.sdp));
-                        if (data.sdp.type === 'offer') {
-                            const answer = await peerConn.createAnswer();
-                            await peerConn.setLocalDescription(answer);
-                            sendSignal({ type: 'sdp', room: roomCode, sdp: peerConn.localDescription });
-                        }
-                    }
-                    if (data.ice) {
-                        await peerConn.addIceCandidate(new RTCIceCandidate(data.ice));
-                    }
-                } catch (err) {
-                    console.log('信令处理异常：', err);
-                }
-            };
-
-            // 连接关闭：自动切换下一个服务器
-            ws.onclose = () => {
-                if (isConnected) {
-                    updateStatus('信令断开，正在自动重连...', 'reconnecting');
-                }
-                // 清理旧RTC
-                if (peerConn) peerConn.close();
-                // 延迟重连
-                reconnectTimer = setTimeout(() => {
-                    CONFIG.CURRENT_SERVER_INDEX++;
-                    connectSignalServer();
-                }, CONFIG.RECONNECT_INTERVAL);
-            };
-
-            // 连接错误：直接切换下一个
-            ws.onerror = () => {
-                ws.close();
-                CONFIG.CURRENT_SERVER_INDEX++;
-                setTimeout(connectSignalServer, 1000);
-            };
-        }
-
-        /**************************
-         * 3. 初始化WebRTC端对端连接
-         **************************/
-        function initRTC() {
+            updateStatus('正在生成邀请码...');
+            // 创建WebRTC连接
             peerConn = new RTCPeerConnection(CONFIG.RTC);
-
             // 创建数据通道
-            dataChannel = peerConn.createDataChannel('chat', { ordered: true, maxRetransmits: 10 });
+            createDataChannel();
+            // 监听ICE候选
+            peerConn.onicecandidate = (e) => {
+                if (e.candidate) {
+                    // ICE候选收集完成后，更新邀请码
+                    if (peerConn.localDescription) {
+                        document.getElementById('offerCode').value = JSON.stringify(peerConn.localDescription);
+                    }
+                }
+            };
+            // 监听连接状态
+            peerConn.onconnectionstatechange = onConnStateChange;
+
+            // 创建Offer（邀请码核心）
+            const offer = await peerConn.createOffer();
+            await peerConn.setLocalDescription(offer);
+
+            // 显示邀请码弹窗
+            document.getElementById('offerCode').value = JSON.stringify(offer);
+            document.getElementById('offerModal').classList.add('show');
+            updateStatus('邀请码已生成，发给对方后等待连接');
+        }
+
+        /**************************
+         * 核心2：粘贴邀请码，加入连接（接收方）
+         **************************/
+        async function answerOffer() {
+            const offerText = document.getElementById('offerInput').value.trim();
+            if (!offerText) {
+                alert('请先粘贴对方的邀请码！');
+                return;
+            }
+
+            // 重置旧连接
+            resetAll();
+
+            try {
+                const offer = JSON.parse(offerText);
+                updateStatus('正在建立连接...');
+
+                // 创建WebRTC连接
+                peerConn = new RTCPeerConnection(CONFIG.RTC);
+                // 创建数据通道
+                createDataChannel();
+                // 监听ICE候选
+                peerConn.onicecandidate = (e) => {
+                    if (e.candidate && peerConn.localDescription) {
+                        // 无需显示，自动完成连接
+                    }
+                };
+                // 监听连接状态
+                peerConn.onconnectionstatechange = onConnStateChange;
+
+                // 设置对方的Offer
+                await peerConn.setRemoteDescription(new RTCSessionDescription(offer));
+                // 创建Answer并设置
+                const answer = await peerConn.createAnswer();
+                await peerConn.setLocalDescription(answer);
+
+                updateStatus('正在完成连接，稍候...');
+            } catch (err) {
+                alert('邀请码无效，请检查后重新粘贴！');
+                updateStatus('邀请码无效，重新尝试');
+                console.error(err);
+            }
+        }
+
+        /**************************
+         * 创建数据通道（文字/图片/视频传输）
+         **************************/
+        function createDataChannel() {
+            // 发起方创建通道，接收方监听通道
+            if (peerConn.createDataChannel) {
+                dataChannel = peerConn.createDataChannel('chat', { ordered: true, maxRetransmits: 10 });
+                initDataChannel();
+            } else {
+                peerConn.ondatachannel = (e) => {
+                    dataChannel = e.channel;
+                    initDataChannel();
+                };
+            }
+        }
+
+        /**************************
+         * 初始化数据通道
+         **************************/
+        function initDataChannel() {
+            // 接收消息
             dataChannel.onmessage = (e) => {
                 const msg = JSON.parse(e.data);
-                addMsg(msg, 'other');
+                addMessage(msg, 'other');
             };
+            // 通道打开
             dataChannel.onopen = () => {
                 isConnected = true;
-                updateStatus(`已成功连接 [${roomCode}]，可聊天/通话`, 'connected');
+                updateStatus('连接成功！可以聊天、发文件、通话');
                 document.getElementById('callBtn').disabled = false;
+                // 关闭邀请码弹窗
+                document.getElementById('offerModal').classList.remove('show');
             };
+            // 通道关闭
             dataChannel.onclose = () => {
                 if (isConnected) {
                     isConnected = false;
-                    updateStatus('数据通道断开，正在重连...', 'reconnecting');
-                }
-            };
-
-            // 媒体通道
-            peerConn.ontrack = (e) => {
-                if (isCalling) document.getElementById('callTitle').textContent = '通话中';
-            };
-
-            // ICE候选转发
-            peerConn.onicecandidate = (e) => {
-                if (e.candidate && ws && ws.readyState === WebSocket.OPEN) {
-                    sendSignal({ type: 'ice', room: roomCode, ice: e.candidate });
-                }
-            };
-
-            // 连接状态
-            peerConn.onconnectionstatechange = () => {
-                if (peerConn.connectionState === 'disconnected' || peerConn.connectionState === 'failed') {
-                    isConnected = false;
+                    updateStatus('连接已断开');
                     document.getElementById('callBtn').disabled = true;
                     if (isCalling) endCall();
-                    updateStatus('连接断开，正在自动重连...', 'reconnecting');
                 }
             };
-
-            // 创建Offer
-            peerConn.createOffer()
-                .then(offer => peerConn.setLocalDescription(offer))
-                .then(() => {
-                    sendSignal({ type: 'sdp', room: roomCode, sdp: peerConn.localDescription });
-                })
-                .catch(err => {
-                    console.error('RTC初始化失败：', err);
-                });
         }
 
         /**************************
-         * 4. 发送信令消息
+         * 监听连接状态
          **************************/
-        function sendSignal(data) {
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify(data));
+        function onConnStateChange() {
+            if (peerConn) {
+                if (peerConn.connectionState === 'connected') {
+                    isConnected = true;
+                    updateStatus('连接成功！可以聊天、发文件、通话');
+                    document.getElementById('callBtn').disabled = false;
+                } else if (peerConn.connectionState === 'disconnected' || peerConn.connectionState === 'failed') {
+                    isConnected = false;
+                    updateStatus('连接已断开');
+                    document.getElementById('callBtn').disabled = true;
+                    if (isCalling) endCall();
+                }
             }
         }
 
         /**************************
-         * 5. 发送文字消息
+         * 发送文字消息
          **************************/
-        function sendMsg() {
+        function sendMessage() {
             const input = document.getElementById('msgInput');
             const content = input.value.trim();
             if (!content || !isConnected || dataChannel.readyState !== 'open') {
@@ -625,19 +628,22 @@
             const msg = {
                 type: 'text',
                 content: content,
-                time: getTime()
+                time: getCurrentTime()
             };
 
+            // 端对端发送
             dataChannel.send(JSON.stringify(msg));
-            addMsg(msg, 'self');
+            // 本地显示
+            addMessage(msg, 'self');
+            // 清空输入
             input.value = '';
         }
 
         /**************************
-         * 6. 文件上传（图片/视频）
+         * 初始化文件上传
          **************************/
         function initFileInput() {
-            document.getElementById('fileInput').addEventListener('change', (e) => {
+            document.getElementById('filePicker').addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (!file || !isConnected || dataChannel.readyState !== 'open') {
                     alert('请先建立稳定连接再发送文件！');
@@ -646,21 +652,22 @@
                 }
 
                 if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
-                    alert('仅支持图片/视频文件！');
+                    alert('仅支持图片和视频文件！');
                     e.target.value = '';
                     return;
                 }
 
+                // 读取文件为Base64
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const msg = {
                         type: file.type.startsWith('image/') ? 'image' : 'video',
                         data: e.target.result,
                         name: file.name,
-                        time: getTime()
+                        time: getCurrentTime()
                     };
                     dataChannel.send(JSON.stringify(msg));
-                    addMsg(msg, 'self');
+                    addMessage(msg, 'self');
                 };
                 reader.readAsDataURL(file);
                 e.target.value = '';
@@ -668,7 +675,7 @@
         }
 
         /**************************
-         * 7. 语音通话
+         * 语音通话
          **************************/
         async function startCall() {
             if (!isConnected) {
@@ -680,18 +687,27 @@
             document.getElementById('callModal').classList.add('show');
 
             try {
+                // 获取麦克风权限
                 localStream = await navigator.mediaDevices.getUserMedia(CONFIG.MEDIA);
+                // 将音频流添加到WebRTC
                 localStream.getTracks().forEach(track => {
                     peerConn.addTrack(track, localStream);
                 });
+                // 接收对方音频流
+                peerConn.ontrack = (e) => {
+                    if (e.streams && e.streams[0] && isCalling) {
+                        // 浏览器自动处理音频播放
+                    }
+                };
             } catch (err) {
-                alert('麦克风权限被拒绝，请允许后重试！');
+                alert('麦克风权限被拒绝，请在浏览器设置中允许！');
                 endCall();
+                console.error(err);
             }
         }
 
         /**************************
-         * 8. 结束通话
+         * 结束通话
          **************************/
         function endCall() {
             isCalling = false;
@@ -703,10 +719,10 @@
         }
 
         /**************************
-         * 9. 添加消息到页面
+         * 添加消息到聊天窗口
          **************************/
-        function addMsg(msg, side) {
-            const msgBox = document.getElementById('messages');
+        function addMessage(msg, side) {
+            const messagesEl = document.getElementById('messages');
             const msgEl = document.createElement('div');
             msgEl.className = `msg msg-${side}`;
 
@@ -720,31 +736,59 @@
             }
 
             msgEl.innerHTML = `${content}<div class="msg-time">${msg.time}</div>`;
-            msgBox.appendChild(msgEl);
-            msgBox.scrollTop = msgBox.scrollHeight;
+            messagesEl.appendChild(msgEl);
+            // 滚动到底部
+            messagesEl.scrollTop = messagesEl.scrollHeight;
         }
 
         /**************************
          * 工具方法
          **************************/
         // 更新状态
-        function updateStatus(text, cls) {
-            const el = document.getElementById('status');
-            el.textContent = text;
-            el.className = `status ${cls}`;
+        function updateStatus(text) {
+            document.getElementById('status').textContent = text;
         }
 
-        // 获取时间
-        function getTime() {
-            return new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false });
+        // 获取当前时间
+        function getCurrentTime() {
+            return new Date().toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
         }
 
-        // 关闭所有连接
-        function closeAllConnections() {
-            if (ws) ws.close();
+        // 复制邀请码
+        function copyOffer() {
+            const offerText = document.getElementById('offerCode').value;
+            navigator.clipboard.writeText(offerText).then(() => {
+                alert('邀请码已复制，发给对方即可！');
+            }).catch(() => {
+                alert('复制失败，请手动复制！');
+            });
+        }
+
+        // 重置所有连接
+        function resetAll() {
+            // 关闭连接
             if (peerConn) peerConn.close();
             if (dataChannel) dataChannel.close();
             if (localStream) localStream.getTracks().forEach(t => t.stop());
+            // 清空状态
+            isConnected = false;
+            isCalling = false;
+            peerConn = null;
+            dataChannel = null;
+            localStream = null;
+            // 清空输入
+            document.getElementById('offerInput').value = '';
+            document.getElementById('msgInput').value = '';
+            // 关闭弹窗
+            document.getElementById('offerModal').classList.remove('show');
+            document.getElementById('callModal').classList.remove('show');
+            // 更新状态
+            updateStatus('已重置，重新选择「生成邀请码」或「粘贴对方邀请码」');
+            document.getElementById('callBtn').disabled = true;
         }
     </script>
 </body>
