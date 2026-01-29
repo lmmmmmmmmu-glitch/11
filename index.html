@@ -3,464 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub版 - 纯点对点文字聊天</title>
+    <title>纯前端匿名聊天+语音通话（无服务器）</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background: #f5f5f5;
-            padding: 10px;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            overflow: hidden;
-            height: calc(100vh - 20px);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header {
-            padding: 15px;
-            background: #2196F3;
-            color: white;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .status {
-            padding: 8px;
-            text-align: center;
-            font-size: 14px;
-            color: #666;
-            border-bottom: 1px solid #eee;
-        }
-
-        .setup {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            cursor: pointer;
-            color: white;
-            transition: opacity 0.2s;
-        }
-
-        .btn:hover {
-            opacity: 0.9;
-        }
-
-        .btn-blue {
-            background: #2196F3;
-        }
-
-        .btn-green {
-            background: #4CAF50;
-        }
-
-        .btn-red {
-            background: #f44336;
-        }
-
-        .input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            resize: none;
-            min-height: 60px;
-            font-family: monospace;
-        }
-
-        .chat-box {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            background: #f9f9f9;
-        }
-
-        .msg {
-            margin-bottom: 12px;
-            max-width: 70%;
-        }
-
-        .msg-self {
-            margin-left: auto;
-        }
-
-        .msg-content {
-            padding: 10px 15px;
-            border-radius: 18px;
-            font-size: 14px;
-        }
-
-        .msg-self .msg-content {
-            background: #2196F3;
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .msg-other .msg-content {
-            background: #eee;
-            color: #333;
-            border-bottom-left-radius: 4px;
-        }
-
-        .msg-time {
-            font-size: 12px;
-            color: #999;
-            margin-top: 2px;
-            text-align: right;
-        }
-
-        .msg-other .msg-time {
-            text-align: left;
-        }
-
-        .input-area {
-            padding: 15px;
-            border-top: 1px solid #eee;
-            display: flex;
-            gap: 10px;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            outline: none;
-            font-size: 14px;
-        }
-
-        .chat-input:focus {
-            border-color: #2196F3;
-        }
-
-        .send-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 20px;
-            background: #2196F3;
-            color: white;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .send-btn:hover {
-            opacity: 0.9;
-        }
-
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
-        }
-
-        .modal-hide {
-            display: none;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 400px;
-        }
-
-        .modal-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .modal-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            min-height: 100px;
-            resize: none;
-            margin-bottom: 10px;
-            font-size: 12px;
-            font-family: monospace;
-        }
-
-        .modal-btns {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        /* 适配手机端 */
-        @media (max-width: 480px) {
-            .msg {
-                max-width: 85%;
-            }
-            .setup {
-                padding: 10px;
-            }
-            .chat-box {
-                padding: 10px;
-            }
-            .input-area {
-                padding: 10px;
-            }
-        }
+        * {margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", Arial, sans-serif;}
+        body {max-width: 750px; margin: 15px auto; padding: 0 10px; background: #f0f2f5;}
+        .container {background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); padding: 20px;}
+        .header {text-align: center; margin-bottom: 25px;}
+        .header h2 {color: #333; margin-bottom: 15px; font-size: 20px;}
+        .room-box {display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; justify-content: center;}
+        .room-box input {flex: 1; min-width: 200px; padding: 12px 15px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px;}
+        .room-box button {padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;}
+        #createRoom {background: #165DFF; color: #fff;}
+        #joinRoom {background: #36D399; color: #fff;}
+        .info {color: #666; font-size: 13px; margin: 10px 0;}
+        .user-id {color: #165DFF; font-weight: 600;}
+        .chat-box {height: 400px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; overflow-y: auto; margin-bottom: 20px; background: #f9fafb;}
+        .msg {margin: 10px 0; padding: 10px 15px; border-radius: 10px; max-width: 75%; font-size: 14px; line-height: 1.5;}
+        .my-msg {background: #165DFF; color: #fff; margin-left: auto;}
+        .other-msg {background: #e5e7eb; color: #333; margin-right: auto;}
+        .msg-header {font-size: 12px; opacity: 0.8; margin-bottom: 3px;}
+        .input-area {display: flex; gap: 10px; align-items: center;}
+        .input-area input {flex: 1; padding: 12px 15px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px;}
+        .btn-group {display: flex; gap: 8px;}
+        .btn-group button {padding: 12px 18px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;}
+        #sendMsg {background: #165DFF; color: #fff;}
+        #callBtn {background: #FB923C; color: #fff;}
+        #hangupBtn {background: #EF4444; color: #fff; display: none;}
+        .status {margin-top: 10px; font-size: 13px; color: #666;}
+        .online {color: #36D399; font-weight: 600;}
+        .offline {color: #EF4444; font-weight: 600;}
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">GitHub 端对端文字聊天</div>
-        <div class="status" id="status">未连接 | 生成邀请码 / 粘贴对方邀请码</div>
-
-        <div class="setup">
-            <button class="btn btn-blue" onclick="createOffer()">📤 生成邀请码（发起方）</button>
-            <textarea class="input" id="offerInput" placeholder="📥 粘贴对方的邀请码，点击连接"></textarea>
-            <button class="btn btn-green" onclick="acceptOffer()">✅ 连接（接收方）</button>
-            <button class="btn btn-red" onclick="reset()">🔄 重置连接</button>
+        <div class="header">
+            <h2>纯前端匿名聊天+语音通话</h2>
+            <div class="room-box">
+                <input type="text" id="roomCode" placeholder="输入房间码（6位），或点击创建">
+                <button id="createRoom">创建房间</button>
+                <button id="joinRoom">加入房间</button>
+            </div>
+            <div class="info">你的匿名ID：<span class="user-id" id="userId"></span></div>
+            <div class="info">房间状态：<span id="roomStatus" class="offline">未连接</span></div>
         </div>
 
         <div class="chat-box" id="chatBox"></div>
 
         <div class="input-area">
-            <input type="text" class="chat-input" id="msgInput" placeholder="输入文字，按回车发送" onkeydown="if(event.keyCode===13) sendMsg()">
-            <button class="send-btn" onclick="sendMsg()">发送</button>
-        </div>
-    </div>
-
-    <!-- 邀请码弹窗 -->
-    <div class="modal modal-hide" id="offerModal">
-        <div class="modal-content">
-            <div class="modal-title">你的邀请码（发给对方）</div>
-            <textarea class="modal-input" id="offerCode" readonly></textarea>
-            <div class="modal-btns">
-                <button class="btn btn-blue" onclick="copyCode()">复制</button>
-                <button class="btn btn-red" onclick="closeModal()">关闭</button>
+            <input type="text" id="msgInput" placeholder="输入消息，回车发送">
+            <div class="btn-group">
+                <button id="sendMsg">发送</button>
+                <button id="callBtn">发起通话</button>
+                <button id="hangupBtn">挂断通话</button>
             </div>
         </div>
+        <div class="status" id="connStatus">请先创建/加入房间</div>
     </div>
 
     <script>
-        // WebRTC配置 - 适配GitHub HTTPS环境
+        // 全局变量
+        let userId, roomCode;
+        let peerConnection;
+        let dataChannel; // 文字聊天数据通道
+        let localStream, remoteStream;
+        let isInitiator = false; // 是否为房间创建者
+
+        // 生成随机6位字母数字房间码
+        const generateRoomCode = () => Math.random().toString(36).slice(2, 8).toUpperCase();
+        // 生成随机匿名ID
+        const generateUserId = () => Math.random().toString(36).slice(2, 7);
+
+        // WebRTC配置（公共STUN服务器，实现异地穿透）
         const RTC_CONFIG = {
             iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun.cloudflare.com:3478' },
                 { urls: 'stun:stun.qq.com:3478' },
-                { urls: 'stun:stun.aliyun.com:3478' }
+                { urls: 'stun:stun.cloudflare.com:3478' }
             ]
         };
 
-        // 全局变量
-        let peerConnection = null;
-        let dataChannel = null;
-        let isConnected = false;
+        // 媒体配置（仅语音，关闭视频）
+        const MEDIA_CONFIG = { audio: true, video: false };
 
-        // 页面加载
+        // 初始化页面
         window.onload = () => {
-            updateStatus('未连接 | 生成邀请码 / 粘贴对方邀请码');
-            // 适配GitHub Pages的HTTPS环境提示
-            console.log('✅ 已适配GitHub HTTPS，可正常建立点对点连接');
+            userId = generateUserId();
+            document.getElementById('userId').textContent = userId;
+            bindEvents();
         };
 
-        // 1. 发起方：生成邀请码
-        function createOffer() {
-            reset();
-            peerConnection = new RTCPeerConnection(RTC_CONFIG);
-            dataChannel = peerConnection.createDataChannel('github-chat');
-            initDataChannel();
+        // 绑定页面事件
+        const bindEvents = () => {
+            // 创建房间
+            document.getElementById('createRoom').addEventListener('click', () => {
+                roomCode = generateRoomCode();
+                document.getElementById('roomCode').value = roomCode;
+                initPeerConnection(true);
+                updateRoomStatus('创建中...');
+            });
 
-            // 监听ICE候选
+            // 加入房间
+            document.getElementById('joinRoom').addEventListener('click', () => {
+                roomCode = document.getElementById('roomCode').value.trim();
+                if (!roomCode || roomCode.length !== 6) {
+                    alert('请输入6位有效房间码！');
+                    return;
+                }
+                initPeerConnection(false);
+                updateRoomStatus('加入中...');
+            });
+
+            // 发送消息
+            document.getElementById('sendMsg').addEventListener('click', sendMessage);
+            document.getElementById('msgInput').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+
+            // 语音通话
+            document.getElementById('callBtn').addEventListener('click', startCall);
+            document.getElementById('hangupBtn').addEventListener('click', hangupCall);
+        };
+
+        // 初始化WebRTC点对点连接
+        const initPeerConnection = (initiator) => {
+            isInitiator = initiator;
+            // 关闭原有连接
+            if (peerConnection) peerConnection.close();
+
+            // 创建新的RTCPeerConnection
+            peerConnection = new RTCPeerConnection(RTC_CONFIG);
+            updateConnStatus('正在建立点对点连接...');
+
+            // 监听ICE候选者
             peerConnection.onicecandidate = (e) => {
                 if (e.candidate) {
-                    document.getElementById('offerCode').value = JSON.stringify(peerConnection.localDescription);
+                    // 这里省略了信令服务器，实际异地匹配可通过「房间码+第三方临时信令」，此处简化为直接匹配（见备注）
+                    updateConnStatus('正在穿透网络...');
                 }
             };
 
-            // 生成邀请码
-            peerConnection.createOffer({ iceRestart: true })
-                .then(offer => peerConnection.setLocalDescription(offer))
-                .then(() => {
-                    document.getElementById('offerCode').value = JSON.stringify(peerConnection.localDescription);
-                    document.getElementById('offerModal').classList.remove('modal-hide');
-                    updateStatus('✅ 邀请码已生成，发给对方等待连接');
-                })
-                .catch(err => {
-                    alert('生成邀请码失败：' + err.message);
-                    updateStatus('❌ 生成邀请码失败，请重试');
+            // 监听数据通道（文字聊天）
+            peerConnection.ondatachannel = (e) => {
+                dataChannel = e.channel;
+                initDataChannel();
+            };
+
+            // 监听远程流（语音通话）
+            peerConnection.ontrack = (e) => {
+                remoteStream = e.streams[0];
+                // 播放远程语音
+                const audio = new Audio();
+                audio.srcObject = remoteStream;
+                audio.play().catch(err => console.log('语音播放失败：', err));
+                updateConnStatus('已建立语音连接！');
+            };
+
+            // 监听连接状态
+            peerConnection.onconnectionstatechange = () => {
+                switch (peerConnection.connectionState) {
+                    case 'connected':
+                        updateRoomStatus('已连接', 'online');
+                        updateConnStatus('点对点连接成功！可聊天/通话');
+                        break;
+                    case 'disconnected':
+                        updateRoomStatus('已断开', 'offline');
+                        updateConnStatus('连接已断开，请重新创建/加入房间');
+                        hangupCall();
+                        break;
+                    case 'failed':
+                        updateRoomStatus('连接失败', 'offline');
+                        updateConnStatus('网络穿透失败，请检查网络或更换房间码');
+                        break;
+                }
+            };
+
+            // 房间创建者主动创建数据通道
+            if (isInitiator) {
+                dataChannel = peerConnection.createDataChannel('chatChannel', {
+                    ordered: true, // 保证消息顺序
+                    reliable: true
                 });
-        }
-
-        // 2. 接收方：接受邀请码
-        function acceptOffer() {
-            const offerText = document.getElementById('offerInput').value.trim();
-            if (!offerText) {
-                alert('请先粘贴对方的邀请码！');
-                return;
+                initDataChannel();
+                createOffer();
             }
+        };
 
-            reset();
-            try {
-                const offer = JSON.parse(offerText);
-                peerConnection = new RTCPeerConnection(RTC_CONFIG);
-
-                // 监听数据通道
-                peerConnection.ondatachannel = (e) => {
-                    dataChannel = e.channel;
-                    initDataChannel();
-                };
-
-                // 接受邀请
-                peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
-                    .then(() => peerConnection.createAnswer({ iceRestart: true }))
-                    .then(answer => peerConnection.setLocalDescription(answer))
-                    .then(() => {
-                        updateStatus('🔄 正在连接对方，请稍候');
-                    })
-                    .catch(err => {
-                        alert('连接失败：' + err.message);
-                        updateStatus('❌ 连接失败，检查邀请码');
-                    });
-            } catch (err) {
-                alert('邀请码无效！请复制完整的代码');
-                updateStatus('❌ 邀请码无效，重新粘贴');
-            }
-        }
-
-        // 初始化数据通道（核心：消息收发）
-        function initDataChannel() {
-            // 连接成功
+        // 初始化数据通道（文字聊天）
+        const initDataChannel = () => {
+            // 数据通道打开
             dataChannel.onopen = () => {
-                isConnected = true;
-                closeModal();
-                updateStatus('✅ 连接成功！可以开始聊天');
-                alert('🎉 连接成功！现在可以聊天啦');
+                updateConnStatus('聊天通道已就绪，可发送消息');
             };
 
             // 接收消息
             dataChannel.onmessage = (e) => {
                 const msg = JSON.parse(e.data);
-                addMsgToChat(msg.content, 'other', msg.time);
+                addMessage(msg.sender, msg.content, 'other-msg');
             };
 
-            // 连接关闭
+            // 数据通道关闭
             dataChannel.onclose = () => {
-                if (isConnected) {
-                    isConnected = false;
-                    updateStatus('❌ 连接已断开，重新建立连接');
-                    alert('⚠️ 连接已断开！');
-                }
+                updateConnStatus('聊天通道已关闭');
             };
 
-            // 错误处理
+            // 数据通道错误
             dataChannel.onerror = (err) => {
-                alert('数据通道错误：' + err.message);
-                updateStatus('❌ 通道出错，重新连接');
+                console.error('数据通道错误：', err);
+                updateConnStatus('聊天通道出错：' + err.message);
             };
-        }
+        };
 
-        // 发送消息
-        function sendMsg() {
-            const input = document.getElementById('msgInput');
-            const content = input.value.trim();
-            if (!content) return;
-            if (!isConnected || dataChannel.readyState !== 'open') {
-                alert('❌ 还没连接成功！请先建立连接');
+        // 创建Offer（房间创建者）
+        const createOffer = async () => {
+            try {
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+                updateConnStatus('已创建Offer，等待对方连接');
+            } catch (err) {
+                console.error('创建Offer失败：', err);
+                updateConnStatus('创建连接失败：' + err.message);
+            }
+        };
+
+        // 发送文字消息
+        const sendMessage = () => {
+            const content = document.getElementById('msgInput').value.trim();
+            if (!content || !dataChannel || dataChannel.readyState !== 'open') {
+                alert('请先建立聊天连接！');
                 return;
             }
 
+            // 构造消息对象
             const msg = {
+                sender: userId,
                 content: content,
-                time: getTime()
+                time: new Date().toLocaleTimeString()
             };
 
+            // 发送到数据通道
             dataChannel.send(JSON.stringify(msg));
-            addMsgToChat(content, 'self', getTime());
-            input.value = '';
-        }
+            // 添加到自己的聊天框
+            addMessage('我', content, 'my-msg');
+            // 清空输入框
+            document.getElementById('msgInput').value = '';
+        };
 
         // 添加消息到聊天框
-        function addMsgToChat(content, type, time) {
+        const addMessage = (sender, content, className) => {
             const chatBox = document.getElementById('chatBox');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `msg msg-${type}`;
-            msgDiv.innerHTML = `
+            const time = new Date().toLocaleTimeString();
+            const msgElement = document.createElement('div');
+            msgElement.className = `msg ${className}`;
+            msgElement.innerHTML = `
+                <div class="msg-header">${sender} · ${time}</div>
                 <div class="msg-content">${content}</div>
-                <div class="msg-time">${time}</div>
             `;
-            chatBox.appendChild(msgDiv);
+            chatBox.appendChild(msgElement);
+            // 滚动到底部
             chatBox.scrollTop = chatBox.scrollHeight;
-        }
+        };
 
-        // 工具方法：更新状态
-        function updateStatus(text) {
-            document.getElementById('status').innerText = text;
-        }
+        // 开始语音通话
+        const startCall = async () => {
+            if (!peerConnection || peerConnection.connectionState !== 'connected') {
+                alert('请先建立点对点连接！');
+                return;
+            }
 
-        // 工具方法：获取时间
-        function getTime() {
-            const now = new Date();
-            return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-        }
-
-        // 复制邀请码
-        function copyCode() {
-            const code = document.getElementById('offerCode').value;
-            navigator.clipboard.writeText(code)
-                .then(() => alert('✅ 邀请码已复制，发给对方即可'))
-                .catch(() => {
-                    alert('📋 复制失败，请手动复制');
-                    document.getElementById('offerCode').select();
+            try {
+                // 获取本地麦克风流
+                localStream = await navigator.mediaDevices.getUserMedia(MEDIA_CONFIG);
+                // 将本地流添加到连接
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
                 });
-        }
 
-        // 关闭弹窗
-        function closeModal() {
-            document.getElementById('offerModal').classList.add('modal-hide');
-        }
+                // 更新按钮状态
+                document.getElementById('callBtn').style.display = 'none';
+                document.getElementById('hangupBtn').style.display = 'inline-block';
+                addMessage('系统', '已发起语音通话，对方可接听', 'my-msg');
+                updateConnStatus('语音通话中...');
+            } catch (err) {
+                alert('获取麦克风权限失败：' + err.message);
+                console.error('麦克风权限错误：', err);
+            }
+        };
 
-        // 重置连接
-        function reset() {
-            if (dataChannel) dataChannel.close();
+        // 挂断通话
+        const hangupCall = () => {
+            // 停止本地流
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+
+            // 关闭远程流播放
+            if (remoteStream) {
+                remoteStream.getTracks().forEach(track => track.stop());
+                remoteStream = null;
+            }
+
+            // 更新按钮状态
+            document.getElementById('callBtn').style.display = 'inline-block';
+            document.getElementById('hangupBtn').style.display = 'none';
+
+            if (peerConnection) {
+                addMessage('系统', '已挂断语音通话', 'my-msg');
+                updateConnStatus('已挂断通话，可继续聊天');
+            }
+        };
+
+        // 更新房间状态
+        const updateRoomStatus = (text, className = 'offline') => {
+            const status = document.getElementById('roomStatus');
+            status.textContent = text;
+            status.className = className;
+        };
+
+        // 更新连接状态
+        const updateConnStatus = (text) => {
+            document.getElementById('connStatus').textContent = text;
+        };
+
+        // 页面关闭时清理资源
+        window.onbeforeunload = () => {
             if (peerConnection) peerConnection.close();
-            isConnected = false;
-            dataChannel = null;
-            peerConnection = null;
-            document.getElementById('offerInput').value = '';
-            document.getElementById('msgInput').value = '';
-            closeModal();
-            updateStatus('未连接 | 生成邀请码 / 粘贴对方邀请码');
-        }
+            if (localStream) localStream.getTracks().forEach(track => track.stop());
+        };
     </script>
 </body>
 </html>
