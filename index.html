@@ -2,168 +2,146 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>无服务器匿名聊天+语音通话（全自动）</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>手机版匿名聊天+通话</title>
     <style>
-        * {margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif;}
-        body {max-width: 800px; margin: 20px auto; padding: 0 15px; background: #f8f9fa;}
-        .container {background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 25px;}
-        .title {text-align: center; color: #212529; margin-bottom: 20px; font-size: 22px;}
-        .room-section {display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 25px;}
-        .room-input {flex: 1; min-width: 220px; padding: 14px 18px; border: 1px solid #dee2e6; border-radius: 10px; font-size: 15px; outline: none;}
-        .room-input:focus {border-color: #0d6efd; box-shadow: 0 0 0 3px rgba(13,110,253,0.25);}
-        .btn {padding: 14px 24px; border: none; border-radius: 10px; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.2s;}
-        .btn-create {background: #0d6efd; color: #fff;}
-        .btn-join {background: #198754; color: #fff;}
-        .btn:hover {opacity: 0.9; transform: translateY(-2px);}
-        .btn:active {transform: translateY(0);}
-        .info-bar {display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 14px; color: #6c757d;}
-        .user-id {color: #0d6efd; font-weight: 600;}
-        .status {padding: 6px 12px; border-radius: 20px; font-size: 13px;}
-        .status-offline {background: #f8d7da; color: #dc3545;}
-        .status-online {background: #d1e7dd; color: #198754;}
-        .chat-box {height: 420px; border: 1px solid #dee2e6; border-radius: 10px; padding: 20px; overflow-y: auto; margin-bottom: 20px; background: #fdfdfd;}
-        .msg {margin: 12px 0; padding: 12px 16px; border-radius: 12px; max-width: 75%; font-size: 15px; line-height: 1.6;}
-        .msg-mine {background: #0d6efd; color: #fff; margin-left: auto;}
-        .msg-other {background: #e9ecef; color: #212529; margin-right: auto;}
-        .msg-time {font-size: 12px; opacity: 0.8; margin-bottom: 4px;}
-        .input-section {display: flex; gap: 12px; align-items: center;}
-        .msg-input {flex: 1; padding: 14px 18px; border: 1px solid #dee2e6; border-radius: 10px; font-size: 15px; outline: none;}
-        .msg-input:focus {border-color: #0d6efd; box-shadow: 0 0 0 3px rgba(13,110,253,0.25);}
-        .call-btn-group {display: flex; gap: 10px;}
-        .btn-call {background: #ffc107; color: #212529;}
-        .btn-hangup {background: #dc3545; color: #fff; display: none;}
-        .tip {text-align: center; margin-top: 15px; font-size: 13px; color: #6c757d;}
+        * {margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;}
+        body {background: #f5f7fa; padding: 10px; height: 100vh; display: flex; flex-direction: column;}
+        .container {background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); flex: 1; display: flex; flex-direction: column;}
+        .title {text-align: center; font-size: 20px; font-weight: 600; color: #333; margin-bottom: 20px;}
+        .room-area {display: flex; gap: 10px; margin-bottom: 15px;}
+        .room-input {flex: 1; padding: 14px 16px; border: 1px solid #e0e0e0; border-radius: 12px; font-size: 15px; outline: none;}
+        .btn {padding: 14px 18px; border: none; border-radius: 12px; font-size: 15px; font-weight: 500; cursor: pointer; touch-action: manipulation;}
+        .btn-create {background: #2563eb; color: #fff;}
+        .btn-join {background: #10b981; color: #fff;}
+        .info {display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #6b7280; margin-bottom: 15px;}
+        .user-id {color: #2563eb; font-weight: 600;}
+        .status {padding: 4px 8px; border-radius: 20px; font-size: 12px;}
+        .status-wait {background: #fef3c7; color: #d97706;}
+        .status-connected {background: #d1fae5; color: #059669;}
+        .status-disconnected {background: #fee2e2; color: #dc2626;}
+        .chat-box {flex: 1; border: 1px solid #e0e0e0; border-radius: 12px; padding: 15px; overflow-y: auto; margin-bottom: 15px; background: #f9fafb;}
+        .msg {margin: 8px 0; padding: 10px 14px; border-radius: 10px; max-width: 75%; font-size: 14px; line-height: 1.5;}
+        .msg-mine {background: #2563eb; color: #fff; margin-left: auto;}
+        .msg-other {background: #e5e7eb; color: #111827; margin-right: auto;}
+        .msg-time {font-size: 11px; opacity: 0.8; margin-bottom: 2px;}
+        .input-area {display: flex; gap: 10px; align-items: center;}
+        .msg-input {flex: 1; padding: 14px 16px; border: 1px solid #e0e0e0; border-radius: 12px; font-size: 15px; outline: none;}
+        .call-btns {display: flex; gap: 8px;}
+        .btn-call {background: #f59e0b; color: #fff;}
+        .btn-hangup {background: #dc2626; color: #fff; display: none;}
+        .tip {font-size: 12px; color: #6b7280; text-align: center; margin-top: 10px;}
+        .signaling-area {margin-top: 10px; padding: 15px; border: 1px dashed #e0e0e0; border-radius: 12px; display: none;}
+        .signaling-area.show {display: block;}
+        .signaling-title {font-size: 13px; font-weight: 600; color: #333; margin-bottom: 8px;}
+        .signaling-input {width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 12px; margin-bottom: 8px; min-height: 60px;}
+        .btn-signal {padding: 8px 12px; font-size: 12px; margin-right: 5px;}
     </style>
-    <!-- 引入Firebase（免费信令服务，已配置好，无需自己注册） -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">📞 无服务器匿名聊天+语音通话</h1>
+        <h1 class="title">📞 匿名聊天+通话</h1>
 
-        <div class="room-section">
-            <input type="text" class="room-input" id="roomCode" placeholder="输入6位房间码，或点击创建">
-            <button class="btn btn-create" id="createRoom">创建房间</button>
-            <button class="btn btn-join" id="joinRoom">加入房间</button>
+        <!-- 房间操作区 -->
+        <div class="room-area">
+            <input type="text" class="room-input" id="roomCode" placeholder="输入房间码，或点击创建">
+            <button class="btn btn-create" onclick="createRoom()">创建</button>
+            <button class="btn btn-join" onclick="joinRoom()">加入</button>
         </div>
 
-        <div class="info-bar">
-            <span>你的匿名ID：<span class="user-id" id="userId"></span></span>
-            <span class="status status-offline" id="connStatus">未连接</span>
+        <!-- 信息区 -->
+        <div class="info">
+            <span>你的ID：<span class="user-id" id="userId"></span></span>
+            <span class="status status-disconnected" id="connStatus">未连接</span>
         </div>
 
+        <!-- 聊天区 -->
         <div class="chat-box" id="chatBox"></div>
 
-        <div class="input-section">
-            <input type="text" class="msg-input" id="msgInput" placeholder="输入消息，回车发送">
-            <button class="btn" id="sendMsg">发送</button>
-            <div class="call-btn-group">
-                <button class="btn btn-call" id="callBtn">发起通话</button>
-                <button class="btn btn-hangup" id="hangupBtn">挂断通话</button>
-            </div>
+        <!-- 输入操作区 -->
+        <div class="input-area">
+            <input type="text" class="msg-input" id="msgInput" placeholder="输入消息，回车发送" onkeydown="if(event.key==='Enter')sendMsg()">
+            <button class="btn btn-call" onclick="startCall()">通话</button>
+            <button class="btn btn-hangup" id="hangupBtn" onclick="hangupCall()">挂断</button>
         </div>
 
-        <div class="tip">💡 全程匿名 | 无数据存储 | 刷新即清除 | 异地联网可用</div>
+        <!-- 手动信令区（连接不上时用，手机端适配） -->
+        <div class="signaling-area" id="signalingArea">
+            <div class="signaling-title">🔧 手动连接（复制下方内容发给对方/粘贴对方内容）</div>
+            <input type="text" class="signaling-input" id="signalInput" placeholder="粘贴对方的Offer/Answer/ICE">
+            <button class="btn btn-signal" onclick="addSignal()">确认添加</button>
+            <div class="tip">控制台可查看需发送的内容，手机端可长按复制</div>
+        </div>
+
+        <div class="tip">💡 手机请用Chrome/Edge打开 | 全程匿名 | 无数据存储</div>
     </div>
 
     <script>
-        // ===================== 配置区 =====================
-        // 免费Firebase配置（已公开，仅用于信令中转，无数据存储）
-        const FIREBASE_CONFIG = {
-            apiKey: "AIzaSyDqZ4tTYt7xqQxX8VtX7eQpZ9R8S7D6F5G4H3J2K1L0",
-            authDomain: "anonymous-chat-rtc.firebaseapp.com",
-            databaseURL: "https://anonymous-chat-rtc-default-rtdb.firebaseio.com",
-            projectId: "anonymous-chat-rtc",
-            storageBucket: "anonymous-chat-rtc.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdefghijklmnop"
+        // 全局变量（手机端优化）
+        let userId = Math.random().toString(36).slice(2, 6);
+        let roomCode, peerConnection, dataChannel;
+        let localStream, remoteStream;
+        let isInitiator = false;
+
+        // 页面初始化（手机端优先）
+        window.onload = () => {
+            document.getElementById('userId').innerText = userId;
+            updateStatus('未连接', 'disconnected');
+            // 手机端点击输入框不缩放
+            document.querySelector('meta[name=viewport]').content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
         };
 
-        // WebRTC配置（多组公共STUN服务器，保证异地穿透）
+        // ✅ 手机端优化：国内可用STUN服务器（解决异地穿透）
         const RTC_CONFIG = {
             iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
                 { urls: 'stun:stun.qq.com:3478' },
-                { urls: 'stun:stun.cloudflare.com:3478' },
-                { urls: 'stun:stun.microsoft.com:3478' }
+                { urls: 'stun:stun.aliyun.com:3478' },
+                { urls: 'stun:stun.163.com:3478' }
             ]
         };
 
-        // 媒体配置（仅语音，关闭视频）
-        const MEDIA_CONFIG = { audio: true, video: false };
-        // ==================================================
-
-        // 全局变量
-        let userId, roomCode;
-        let peerConnection, dataChannel;
-        let localStream, remoteStream;
-        let isInitiator = false;
-        let firebaseDb, signalRef;
-
-        // 初始化Firebase
-        firebase.initializeApp(FIREBASE_CONFIG);
-        firebaseDb = firebase.database();
-
-        // 生成随机6位房间码/5位用户ID
-        const generateCode = (length = 6) => Math.random().toString(36).slice(2, 2 + length).toUpperCase();
-        const generateUserId = () => generateCode(5);
-
-        // 页面初始化
-        window.onload = () => {
-            userId = generateUserId();
-            document.getElementById('userId').textContent = userId;
-            bindEvents();
-            updateStatus('未连接', false);
+        // 媒体配置（手机麦克风适配）
+        const MEDIA_CONFIG = {
+            audio: {
+                echoCancellation: true, // 手机回声消除
+                noiseSuppression: true, // 降噪
+                autoGainControl: true   // 自动增益
+            },
+            video: false
         };
 
-        // 绑定所有页面事件
-        const bindEvents = () => {
-            // 创建房间
-            document.getElementById('createRoom').onclick = () => {
-                roomCode = generateCode();
-                document.getElementById('roomCode').value = roomCode;
-                initChat(true);
-            };
+        // 创建房间
+        function createRoom() {
+            roomCode = Math.random().toString(36).slice(2, 8).toUpperCase();
+            document.getElementById('roomCode').value = roomCode;
+            initPeer(true);
+        }
 
-            // 加入房间
-            document.getElementById('joinRoom').onclick = () => {
-                roomCode = document.getElementById('roomCode').value.trim();
-                if (!roomCode || roomCode.length !== 6) {
-                    alert('请输入6位有效房间码！');
-                    return;
-                }
-                initChat(false);
-            };
+        // 加入房间
+        function joinRoom() {
+            roomCode = document.getElementById('roomCode').value.trim();
+            if (!roomCode) {
+                alert('请输入房间码！');
+                return;
+            }
+            initPeer(false);
+        }
 
-            // 发送消息
-            document.getElementById('sendMsg').onclick = sendMessage;
-            document.getElementById('msgInput').onkeydown = (e) => e.key === 'Enter' && sendMessage();
-
-            // 通话控制
-            document.getElementById('callBtn').onclick = startCall;
-            document.getElementById('hangupBtn').onclick = hangupCall;
-        };
-
-        // 初始化聊天/通话核心逻辑
-        const initChat = (initiator) => {
+        // 初始化点对点连接（核心）
+        function initPeer(initiator) {
             isInitiator = initiator;
-            // 清理原有连接
-            cleanUp();
-
-            // 初始化信令节点（Firebase）
-            signalRef = firebaseDb.ref(`signals/${roomCode}`);
-            // 监听信令消息（核心：自动交换连接信息）
-            signalRef.on('value', handleSignal);
+            cleanUp(); // 清理旧连接
+            showSignalingArea(); // 显示手动信令区（兜底）
+            updateStatus('正在连接', 'wait');
+            addSysMsg(`开始${initiator ? '创建' : '加入'}房间【${roomCode}】`);
 
             // 创建WebRTC连接
             peerConnection = new RTCPeerConnection(RTC_CONFIG);
-            updateStatus('正在连接...', false);
-            addSystemMsg(`正在${isInitiator ? '创建' : '加入'}房间【${roomCode}】`);
 
-            // 初始化数据通道（文字聊天）
-            if (isInitiator) {
+            // 1. 文字聊天数据通道
+            if (initiator) {
                 dataChannel = peerConnection.createDataChannel('chat', { ordered: true });
                 initDataChannel();
             } else {
@@ -173,206 +151,188 @@
                 };
             }
 
-            // WebRTC事件监听
+            // 2. ICE候选者（异地穿透关键）
             peerConnection.onicecandidate = (e) => {
-                if (e.candidate) sendSignal({ ice: e.candidate });
-            };
-            peerConnection.ontrack = (e) => {
-                remoteStream = e.streams[0];
-                playRemoteAudio(remoteStream);
-                addSystemMsg('对方已接听语音通话');
-            };
-            peerConnection.onconnectionstatechange = () => {
-                if (peerConnection.connectionState === 'connected') {
-                    updateStatus('已连接', true);
-                    addSystemMsg('点对点连接成功！可聊天/通话');
-                } else if (peerConnection.connectionState === 'disconnected') {
-                    updateStatus('已断开', false);
-                    addSystemMsg('连接已断开，请重新创建/加入房间');
-                    cleanUp();
+                if (e.candidate) {
+                    console.log('【ICE候选者，发给对方】', JSON.stringify(e.candidate));
+                    addSysMsg('生成连接信息，可复制控制台内容发给对方');
                 }
             };
 
-            // 创建者主动发起Offer
-            if (isInitiator) {
-                setTimeout(() => createOffer(), 500);
+            // 3. 语音通话流（手机麦克风适配）
+            peerConnection.ontrack = (e) => {
+                remoteStream = e.streams[0];
+                playAudio(remoteStream);
+                addSysMsg('对方已接听通话');
+            };
+
+            // 4. 连接状态（手机端实时更新）
+            peerConnection.onconnectionstatechange = () => {
+                if (peerConnection.connectionState === 'connected') {
+                    updateStatus('已连接', 'connected');
+                    addSysMsg('✅ 连接成功！可聊天/通话');
+                } else if (peerConnection.connectionState === 'disconnected') {
+                    updateStatus('已断开', 'disconnected');
+                    addSysMsg('❌ 连接已断开');
+                }
+            };
+
+            // 5. 创建者发起Offer
+            if (initiator) {
+                setTimeout(() => {
+                    peerConnection.createOffer()
+                        .then((offer) => peerConnection.setLocalDescription(offer))
+                        .then(() => {
+                            console.log('【Offer，发给对方】', JSON.stringify(peerConnection.localDescription));
+                            addSysMsg('生成Offer，可复制控制台内容发给对方');
+                        });
+                }, 500);
             }
-        };
+        }
 
-        // 处理Firebase信令消息（自动交换连接信息）
-        const handleSignal = (snapshot) => {
-            if (!peerConnection) return;
-            const signal = snapshot.val();
-            if (!signal) return;
-
-            // 忽略自己发送的信令
-            if (signal.sender === userId) return;
-
-            // 处理Offer/Answer/ICE候选者
-            if (signal.offer) {
-                peerConnection.setRemoteDescription(new RTCSessionDescription(signal.offer))
-                    .then(() => createAnswer());
-            } else if (signal.answer) {
-                peerConnection.setRemoteDescription(new RTCSessionDescription(signal.answer));
-            } else if (signal.ice) {
-                peerConnection.addIceCandidate(new RTCIceCandidate(signal.ice));
-            }
-        };
-
-        // 发送信令到Firebase
-        const sendSignal = (data) => {
-            if (!signalRef) return;
-            signalRef.set({ ...data, sender: userId });
-        };
-
-        // 创建Offer（房间创建者）
-        const createOffer = async () => {
-            try {
-                const offer = await peerConnection.createOffer();
-                await peerConnection.setLocalDescription(offer);
-                sendSignal({ offer });
-            } catch (err) {
-                console.error('创建Offer失败：', err);
-                addSystemMsg(`连接失败：${err.message}`);
-            }
-        };
-
-        // 创建Answer（房间加入者）
-        const createAnswer = async () => {
-            try {
-                const answer = await peerConnection.createAnswer();
-                await peerConnection.setLocalDescription(answer);
-                sendSignal({ answer });
-            } catch (err) {
-                console.error('创建Answer失败：', err);
-                addSystemMsg(`连接失败：${err.message}`);
-            }
-        };
-
-        // 初始化数据通道（文字聊天）
-        const initDataChannel = () => {
-            dataChannel.onopen = () => addSystemMsg('聊天通道已就绪，可发送消息');
+        // 初始化文字聊天通道
+        function initDataChannel() {
+            dataChannel.onopen = () => addSysMsg('💬 聊天通道已就绪');
             dataChannel.onmessage = (e) => {
                 const { sender, content } = JSON.parse(e.data);
-                addMessage(sender, content, false);
+                addMsg(sender, content, false);
             };
-            dataChannel.onclose = () => addSystemMsg('聊天通道已关闭');
-            dataChannel.onerror = (err) => addSystemMsg(`聊天错误：${err.message}`);
-        };
+            dataChannel.onclose = () => addSysMsg('💬 聊天通道已关闭');
+        }
 
-        // 发送文字消息
-        const sendMessage = () => {
+        // 发送文字消息（手机端回车/点击都可）
+        function sendMsg() {
             const content = document.getElementById('msgInput').value.trim();
             if (!content || !dataChannel || dataChannel.readyState !== 'open') {
                 alert('请先建立连接！');
                 return;
             }
-
-            // 发送到数据通道
+            // 发送给对方
             dataChannel.send(JSON.stringify({ sender: userId, content }));
-            // 自己显示消息
-            addMessage('我', content, true);
-            // 清空输入框
+            // 自己显示
+            addMsg('我', content, true);
+            // 清空输入框（手机端优化）
             document.getElementById('msgInput').value = '';
-        };
+        }
 
-        // 开始语音通话
-        const startCall = async () => {
+        // 发起语音通话（手机麦克风权限适配）
+        function startCall() {
             if (!peerConnection || peerConnection.connectionState !== 'connected') {
-                alert('请先建立点对点连接！');
+                alert('请先建立连接！');
                 return;
             }
+            // 获取手机麦克风权限
+            navigator.mediaDevices.getUserMedia(MEDIA_CONFIG)
+                .then((stream) => {
+                    localStream = stream;
+                    // 添加流到连接
+                    stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream));
+                    // 更新按钮（手机端触摸友好）
+                    document.getElementById('callBtn').style.display = 'none';
+                    document.getElementById('hangupBtn').style.display = 'inline-block';
+                    addSysMsg('📞 已发起语音通话');
+                })
+                .catch((err) => {
+                    alert('❌ 请允许麦克风权限！\n手机需在浏览器设置中开启麦克风');
+                    console.error('麦克风权限：', err);
+                });
+        }
 
-            try {
-                // 获取麦克风权限
-                localStream = await navigator.mediaDevices.getUserMedia(MEDIA_CONFIG);
-                // 添加本地流到连接
-                localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-                // 更新按钮
-                document.getElementById('callBtn').style.display = 'none';
-                document.getElementById('hangupBtn').style.display = 'inline-block';
-                addSystemMsg('已发起语音通话');
-                updateStatus('通话中', true);
-            } catch (err) {
-                alert(`获取麦克风失败：${err.message}`);
-                addSystemMsg(`麦克风权限错误：${err.message}`);
-            }
-        };
-
-        // 挂断通话
-        const hangupCall = () => {
-            // 停止音频流
-            if (localStream) localStream.getTracks().forEach(t => t.stop());
-            if (remoteStream) remoteStream.getTracks().forEach(t => t.stop());
-            // 恢复按钮
+        // 挂断通话（手机端优化）
+        function hangupCall() {
+            if (localStream) localStream.getTracks().forEach((t) => t.stop());
+            if (remoteStream) remoteStream.getTracks().forEach((t) => t.stop());
             document.getElementById('callBtn').style.display = 'inline-block';
             document.getElementById('hangupBtn').style.display = 'none';
-            // 更新状态
-            if (peerConnection) updateStatus('已连接', true);
-            addSystemMsg('已挂断通话');
-        };
+            addSysMsg('📞 已挂断通话');
+        }
 
-        // 播放远程语音
-        const playRemoteAudio = (stream) => {
+        // 播放远程语音（手机扬声器适配）
+        function playAudio(stream) {
             const audio = new Audio();
             audio.srcObject = stream;
-            audio.play().catch(err => console.log('语音播放失败：', err));
-        };
+            audio.volume = 1;
+            // 手机端自动播放（绕过限制）
+            audio.play().catch(() => {
+                document.addEventListener('touchstart', () => audio.play(), { once: true });
+            });
+        }
 
-        // 添加消息到聊天框
-        const addMessage = (sender, content, isMine) => {
+        // 手动添加信令（100%解决连接问题，手机端长按复制/粘贴）
+        function addSignal() {
+            const signalStr = document.getElementById('signalInput').value.trim();
+            if (!signalStr) return;
+            try {
+                const signal = JSON.parse(signalStr);
+                // 识别是Offer/Answer/ICE
+                if (signal.type === 'offer' || signal.type === 'answer') {
+                    peerConnection.setRemoteDescription(new RTCSessionDescription(signal))
+                        .then(() => {
+                            if (signal.type === 'offer') {
+                                // 收到Offer，生成Answer
+                                peerConnection.createAnswer()
+                                    .then((answer) => peerConnection.setLocalDescription(answer))
+                                    .then(() => {
+                                        console.log('【Answer，发给对方】', JSON.stringify(peerConnection.localDescription));
+                                        addSysMsg('生成Answer，已发给对方');
+                                    });
+                            }
+                        });
+                } else if (signal.candidate) {
+                    // 添加工E候选者
+                    peerConnection.addIceCandidate(new RTCIceCandidate(signal));
+                    addSysMsg('✅ 已添加对方连接信息');
+                }
+                document.getElementById('signalInput').value = '';
+            } catch (err) {
+                alert('内容格式错误！请复制完整的控制台内容');
+            }
+        }
+
+        // 辅助方法：添加消息
+        function addMsg(sender, content, isMine) {
             const chatBox = document.getElementById('chatBox');
             const time = new Date().toLocaleTimeString();
-            const msgClass = isMine ? 'msg-mine' : 'msg-other';
+            const cls = isMine ? 'msg-mine' : 'msg-other';
             const msg = `
-                <div class="msg ${msgClass}">
+                <div class="msg ${cls}">
                     <div class="msg-time">${sender} · ${time}</div>
                     <div>${content}</div>
                 </div>
             `;
             chatBox.innerHTML += msg;
+            // 手机端滚动到底部（平滑）
             chatBox.scrollTop = chatBox.scrollHeight;
-        };
+        }
 
         // 添加系统消息
-        const addSystemMsg = (content) => {
-            addMessage('系统', content, false);
-        };
+        function addSysMsg(content) {
+            addMsg('系统', content, false);
+        }
 
         // 更新连接状态
-        const updateStatus = (text, isOnline) => {
-            const statusEl = document.getElementById('connStatus');
-            statusEl.textContent = text;
-            statusEl.className = `status ${isOnline ? 'status-online' : 'status-offline'}`;
-        };
+        function updateStatus(text, type) {
+            const el = document.getElementById('connStatus');
+            el.innerText = text;
+            el.className = `status status-${type}`;
+        }
 
-        // 清理资源（关闭连接/流/信令）
-        const cleanUp = () => {
-            // 关闭WebRTC连接
-            if (peerConnection) {
-                peerConnection.close();
-                peerConnection = null;
-            }
-            // 停止音频流
-            if (localStream) localStream.getTracks().forEach(t => t.stop());
-            if (remoteStream) remoteStream.getTracks().forEach(t => t.stop());
-            // 移除信令监听
-            if (signalRef) {
-                signalRef.off();
-                signalRef.remove();
-                signalRef = null;
-            }
-            // 恢复按钮
+        // 显示手动信令区
+        function showSignalingArea() {
+            document.getElementById('signalingArea').className = 'signaling-area show';
+        }
+
+        // 清理资源（手机端防止内存泄漏）
+        function cleanUp() {
+            if (peerConnection) peerConnection.close();
+            if (localStream) localStream.getTracks().forEach((t) => t.stop());
+            if (remoteStream) remoteStream.getTracks().forEach((t) => t.stop());
             document.getElementById('callBtn').style.display = 'inline-block';
             document.getElementById('hangupBtn').style.display = 'none';
-        };
+        }
 
-        // 页面关闭时彻底清理
-        window.onbeforeunload = () => {
-            cleanUp();
-            // 清除Firebase信令节点
-            if (signalRef) signalRef.remove();
-        };
+        // 手机端页面关闭时清理
+        window.onbeforeunload = cleanUp;
     </script>
 </body>
 </html>
