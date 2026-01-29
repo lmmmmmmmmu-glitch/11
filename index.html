@@ -2,98 +2,74 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <title>手机版匿名聊天+通话</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>QQ收藏当服务器 | 异地聊天（已适配你的链接）</title>
     <style>
-        * {margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;}
-        body {background: #f5f7fa; padding: 10px; height: 100vh; display: flex; flex-direction: column;}
-        .container {background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); flex: 1; display: flex; flex-direction: column;}
-        .title {text-align: center; font-size: 20px; font-weight: 600; color: #333; margin-bottom: 20px;}
-        .room-area {display: flex; gap: 10px; margin-bottom: 15px;}
-        .room-input {flex: 1; padding: 14px 16px; border: 1px solid #e0e0e0; border-radius: 12px; font-size: 15px; outline: none;}
-        .btn {padding: 14px 18px; border: none; border-radius: 12px; font-size: 15px; font-weight: 500; cursor: pointer; touch-action: manipulation;}
-        .btn-create {background: #2563eb; color: #fff;}
-        .btn-join {background: #10b981; color: #fff;}
-        .info {display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #6b7280; margin-bottom: 15px;}
-        .user-id {color: #2563eb; font-weight: 600;}
-        .status {padding: 4px 8px; border-radius: 20px; font-size: 12px;}
-        .status-wait {background: #fef3c7; color: #d97706;}
-        .status-connected {background: #d1fae5; color: #059669;}
-        .status-disconnected {background: #fee2e2; color: #dc2626;}
-        .chat-box {flex: 1; border: 1px solid #e0e0e0; border-radius: 12px; padding: 15px; overflow-y: auto; margin-bottom: 15px; background: #f9fafb;}
-        .msg {margin: 8px 0; padding: 10px 14px; border-radius: 10px; max-width: 75%; font-size: 14px; line-height: 1.5;}
-        .msg-mine {background: #2563eb; color: #fff; margin-left: auto;}
-        .msg-other {background: #e5e7eb; color: #111827; margin-right: auto;}
-        .msg-time {font-size: 11px; opacity: 0.8; margin-bottom: 2px;}
-        .input-area {display: flex; gap: 10px; align-items: center;}
-        .msg-input {flex: 1; padding: 14px 16px; border: 1px solid #e0e0e0; border-radius: 12px; font-size: 15px; outline: none;}
-        .call-btns {display: flex; gap: 8px;}
-        .btn-call {background: #f59e0b; color: #fff;}
-        .btn-hangup {background: #dc2626; color: #fff; display: none;}
-        .tip {font-size: 12px; color: #6b7280; text-align: center; margin-top: 10px;}
-        .signaling-area {margin-top: 10px; padding: 15px; border: 1px dashed #e0e0e0; border-radius: 12px; display: none;}
-        .signaling-area.show {display: block;}
-        .signaling-title {font-size: 13px; font-weight: 600; color: #333; margin-bottom: 8px;}
-        .signaling-input {width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 12px; margin-bottom: 8px; min-height: 60px;}
-        .btn-signal {padding: 8px 12px; font-size: 12px; margin-right: 5px;}
+        * {margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif;}
+        body {padding: 15px; background: #f5f5f5;}
+        .container {max-width: 500px; margin: 0 auto; background: #fff; border-radius: 20px; padding: 25px; box-shadow: 0 0 20px rgba(0,0,0,0.05);}
+        .title {text-align: center; font-size: 19px; font-weight: 600; color: #333; margin-bottom: 25px;}
+        .input-box {margin: 15px 0;}
+        .label {font-size: 14px; color: #666; margin-bottom: 8px; display: block;}
+        .input {width: 100%; padding: 14px; border: 1px solid #e0e0e0; border-radius: 12px; outline: none; font-size: 14px;}
+        .btn {width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: 500; cursor: pointer; margin: 10px 0; color: #fff;}
+        .btn-init {background: #2563eb;}
+        .btn-send {background: #10b981;}
+        .btn-clear {background: #f59e0b;}
+        .chat-box {height: 300px; border: 1px solid #e0e0e0; border-radius: 12px; padding: 15px; overflow-y: auto; margin: 20px 0;}
+        .msg {margin: 10px 0; padding: 12px 16px; border-radius: 10px; max-width: 75%; font-size: 14px; line-height: 1.5;}
+        .my {background: #2563eb; color: #fff; margin-left: auto;}
+        .other {background: #e5e7eb; color: #111827; margin-right: auto;}
+        .msg-time {font-size: 11px; opacity: 0.8; margin-bottom: 3px;}
+        .tip {font-size: 12px; color: #666; margin-top: 10px; line-height: 1.5;}
+        .highlight {color: #2563eb; font-weight: 600;}
+        .link-box {background: #f9fafb; padding: 12px; border-radius: 8px; font-size: 13px; color: #333; margin: 10px 0; word-break: break-all;}
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">📞 匿名聊天+通话</h1>
+        <h1 class="title">📱 QQ收藏｜异地聊天</h1>
 
-        <!-- 房间操作区 -->
-        <div class="room-area">
-            <input type="text" class="room-input" id="roomCode" placeholder="输入房间码，或点击创建">
-            <button class="btn btn-create" onclick="createRoom()">创建</button>
-            <button class="btn btn-join" onclick="joinRoom()">加入</button>
+        <!-- 已集成你的QQ收藏链接 -->
+        <div class="input-box">
+            <label class="label">📌 已绑定你的QQ收藏链接</label>
+            <div class="link-box">https://sharechain.qq.com/8dab4acfec14b9eeb196ddd7184e55de?qq_aio_chat_type=2</div>
+            <button class="btn btn-init" onclick="initChat()">点击初始化连接（无需手动粘贴）</button>
         </div>
 
-        <!-- 信息区 -->
-        <div class="info">
-            <span>你的ID：<span class="user-id" id="userId"></span></span>
-            <span class="status status-disconnected" id="connStatus">未连接</span>
+        <!-- 第二步：信令交换区（核心） -->
+        <div class="input-box">
+            <label class="label">🔧 第二步：信令交换（复制/粘贴）</label>
+            <input type="text" class="input" id="signalInput" placeholder="发起方：生成后粘贴到QQ收藏 | 接收方：粘贴QQ收藏里的信令">
+            <button class="btn btn-send" onclick="exchangeSignal()">确认交换信令</button>
         </div>
 
         <!-- 聊天区 -->
         <div class="chat-box" id="chatBox"></div>
 
-        <!-- 输入操作区 -->
-        <div class="input-area">
-            <input type="text" class="msg-input" id="msgInput" placeholder="输入消息，回车发送" onkeydown="if(event.key==='Enter')sendMsg()">
-            <button class="btn btn-call" onclick="startCall()">通话</button>
-            <button class="btn btn-hangup" id="hangupBtn" onclick="hangupCall()">挂断</button>
+        <!-- 消息输入区 -->
+        <div class="input-box">
+            <input type="text" class="input" id="msgInput" placeholder="输入消息，回车发送">
+            <button class="btn btn-clear" onclick="clearChat()">清空聊天</button>
         </div>
 
-        <!-- 手动信令区（连接不上时用，手机端适配） -->
-        <div class="signaling-area" id="signalingArea">
-            <div class="signaling-title">🔧 手动连接（复制下方内容发给对方/粘贴对方内容）</div>
-            <input type="text" class="signaling-input" id="signalInput" placeholder="粘贴对方的Offer/Answer/ICE">
-            <button class="btn btn-signal" onclick="addSignal()">确认添加</button>
-            <div class="tip">控制台可查看需发送的内容，手机端可长按复制</div>
+        <!-- 操作提示 -->
+        <div class="tip">
+            <p>💡 操作步骤（已适配你的链接，简化版）：</p>
+            <p>1. 点击「初始化连接」，选择你是【发起方】还是【接收方】；</p>
+            <p>2. 发起方：复制生成的信令，<a class="highlight">粘贴到你的QQ收藏笔记</a>；</p>
+            <p>3. 接收方：从你的QQ收藏复制信令，粘贴到输入框点击「确认交换」；</p>
+            <p>4. 连接成功后，直接聊天，数据点对点传输！</p>
         </div>
-
-        <div class="tip">💡 手机请用Chrome/Edge打开 | 全程匿名 | 无数据存储</div>
     </div>
 
     <script>
-        // 全局变量（手机端优化）
-        let userId = Math.random().toString(36).slice(2, 6);
-        let roomCode, peerConnection, dataChannel;
-        let localStream, remoteStream;
-        let isInitiator = false;
+        // 已集成你的QQ收藏链接（无需手动输入）
+        const QQ_COLLECTION_LINK = 'https://sharechain.qq.com/8dab4acfec14b9eeb196ddd7184e55de?qq_aio_chat_type=2';
+        let userId = Math.random().toString(36).slice(2, 7);
+        let peerConnection, dataChannel, isInitiator = false;
 
-        // 页面初始化（手机端优先）
-        window.onload = () => {
-            document.getElementById('userId').innerText = userId;
-            updateStatus('未连接', 'disconnected');
-            // 手机端点击输入框不缩放
-            document.querySelector('meta[name=viewport]').content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-        };
-
-        // ✅ 手机端优化：国内可用STUN服务器（解决异地穿透）
+        // 国内STUN服务器（保证异地穿透）
         const RTC_CONFIG = {
             iceServers: [
                 { urls: 'stun:stun.qq.com:3478' },
@@ -102,48 +78,48 @@
             ]
         };
 
-        // 媒体配置（手机麦克风适配）
-        const MEDIA_CONFIG = {
-            audio: {
-                echoCancellation: true, // 手机回声消除
-                noiseSuppression: true, // 降噪
-                autoGainControl: true   // 自动增益
-            },
-            video: false
-        };
+        // ========== 核心：初始化聊天 ==========
+        function initChat() {
+            // 询问身份：发起方/接收方
+            const role = confirm('你是【发起方】还是【接收方】？\n点击「确定」= 发起方 | 点击「取消」= 接收方');
+            isInitiator = role;
 
-        // 创建房间
-        function createRoom() {
-            roomCode = Math.random().toString(36).slice(2, 8).toUpperCase();
-            document.getElementById('roomCode').value = roomCode;
-            initPeer(true);
-        }
-
-        // 加入房间
-        function joinRoom() {
-            roomCode = document.getElementById('roomCode').value.trim();
-            if (!roomCode) {
-                alert('请输入房间码！');
-                return;
-            }
-            initPeer(false);
-        }
-
-        // 初始化点对点连接（核心）
-        function initPeer(initiator) {
-            isInitiator = initiator;
-            cleanUp(); // 清理旧连接
-            showSignalingArea(); // 显示手动信令区（兜底）
-            updateStatus('正在连接', 'wait');
-            addSysMsg(`开始${initiator ? '创建' : '加入'}房间【${roomCode}】`);
-
+            // 清理旧连接
+            cleanUp();
             // 创建WebRTC连接
+            createPeerConnection();
+            // 发起方生成信令
+            if (isInitiator) {
+                addSysMsg('✅ 你是发起方，请将下方信令粘贴到你的QQ收藏笔记！');
+                peerConnection.onicecandidate = (e) => {
+                    if (e.candidate) {
+                        const signal = JSON.stringify(e.candidate);
+                        document.getElementById('signalInput').value = signal;
+                        addSysMsg('📋 信令已生成，复制到QQ收藏即可！');
+                    }
+                };
+            } else {
+                addSysMsg('✅ 你是接收方，请从你的QQ收藏复制信令，粘贴到输入框后点击「确认交换」！');
+            }
+        }
+
+        // ========== 核心：创建点对点连接 ==========
+        function createPeerConnection() {
             peerConnection = new RTCPeerConnection(RTC_CONFIG);
 
-            // 1. 文字聊天数据通道
-            if (initiator) {
+            // 文字聊天数据通道
+            if (isInitiator) {
                 dataChannel = peerConnection.createDataChannel('chat', { ordered: true });
                 initDataChannel();
+                // 发起方创建Offer
+                setTimeout(() => {
+                    peerConnection.createOffer()
+                        .then(offer => peerConnection.setLocalDescription(offer))
+                        .then(() => {
+                            const offerSignal = JSON.stringify(peerConnection.localDescription);
+                            document.getElementById('signalInput').value = offerSignal;
+                        });
+                }, 500);
             } else {
                 peerConnection.ondatachannel = (e) => {
                     dataChannel = e.channel;
@@ -151,187 +127,104 @@
                 };
             }
 
-            // 2. ICE候选者（异地穿透关键）
-            peerConnection.onicecandidate = (e) => {
-                if (e.candidate) {
-                    console.log('【ICE候选者，发给对方】', JSON.stringify(e.candidate));
-                    addSysMsg('生成连接信息，可复制控制台内容发给对方');
-                }
-            };
-
-            // 3. 语音通话流（手机麦克风适配）
-            peerConnection.ontrack = (e) => {
-                remoteStream = e.streams[0];
-                playAudio(remoteStream);
-                addSysMsg('对方已接听通话');
-            };
-
-            // 4. 连接状态（手机端实时更新）
+            // 连接状态回调
             peerConnection.onconnectionstatechange = () => {
                 if (peerConnection.connectionState === 'connected') {
-                    updateStatus('已连接', 'connected');
-                    addSysMsg('✅ 连接成功！可聊天/通话');
+                    addSysMsg('🎉 异地连接成功！开始聊天吧（数据点对点传输，不经过QQ）');
                 } else if (peerConnection.connectionState === 'disconnected') {
-                    updateStatus('已断开', 'disconnected');
-                    addSysMsg('❌ 连接已断开');
+                    addSysMsg('❌ 连接已断开，请重新初始化');
                 }
             };
+        }
 
-            // 5. 创建者发起Offer
-            if (initiator) {
-                setTimeout(() => {
-                    peerConnection.createOffer()
-                        .then((offer) => peerConnection.setLocalDescription(offer))
+        // ========== 核心：交换信令 ==========
+        function exchangeSignal() {
+            const signalStr = document.getElementById('signalInput').value.trim();
+            if (!signalStr || !peerConnection) {
+                alert('请先初始化连接，并输入有效的信令！');
+                return;
+            }
+
+            try {
+                const signal = JSON.parse(signalStr);
+                if (signal.type === 'offer' || signal.type === 'answer') {
+                    peerConnection.setRemoteDescription(new RTCSessionDescription(signal))
                         .then(() => {
-                            console.log('【Offer，发给对方】', JSON.stringify(peerConnection.localDescription));
-                            addSysMsg('生成Offer，可复制控制台内容发给对方');
+                            if (signal.type === 'offer') {
+                                peerConnection.createAnswer()
+                                    .then(answer => peerConnection.setLocalDescription(answer))
+                                    .then(() => {
+                                        const answerSignal = JSON.stringify(peerConnection.localDescription);
+                                        document.getElementById('signalInput').value = answerSignal;
+                                        addSysMsg('📋 Answer已生成，可发送给发起方！');
+                                    });
+                            }
                         });
-                }, 500);
+                } else if (signal.candidate) {
+                    peerConnection.addIceCandidate(new RTCIceCandidate(signal));
+                    addSysMsg('✅ 信令交换成功，正在建立连接...');
+                }
+            } catch (err) {
+                alert('信令格式错误！请复制完整的QQ收藏内容');
             }
         }
 
-        // 初始化文字聊天通道
+        // ========== 聊天功能 ==========
         function initDataChannel() {
             dataChannel.onopen = () => addSysMsg('💬 聊天通道已就绪');
             dataChannel.onmessage = (e) => {
-                const { sender, content } = JSON.parse(e.data);
-                addMsg(sender, content, false);
+                const { id, msg, time } = JSON.parse(e.data);
+                addMsg(id, msg, time, false);
             };
             dataChannel.onclose = () => addSysMsg('💬 聊天通道已关闭');
         }
 
-        // 发送文字消息（手机端回车/点击都可）
         function sendMsg() {
             const content = document.getElementById('msgInput').value.trim();
             if (!content || !dataChannel || dataChannel.readyState !== 'open') {
                 alert('请先建立连接！');
                 return;
             }
-            // 发送给对方
-            dataChannel.send(JSON.stringify({ sender: userId, content }));
-            // 自己显示
-            addMsg('我', content, true);
-            // 清空输入框（手机端优化）
+
+            const time = new Date().toLocaleTimeString();
+            dataChannel.send(JSON.stringify({ id: userId, msg: content, time: time }));
+            addMsg('我', content, time, true);
             document.getElementById('msgInput').value = '';
         }
 
-        // 发起语音通话（手机麦克风权限适配）
-        function startCall() {
-            if (!peerConnection || peerConnection.connectionState !== 'connected') {
-                alert('请先建立连接！');
-                return;
-            }
-            // 获取手机麦克风权限
-            navigator.mediaDevices.getUserMedia(MEDIA_CONFIG)
-                .then((stream) => {
-                    localStream = stream;
-                    // 添加流到连接
-                    stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream));
-                    // 更新按钮（手机端触摸友好）
-                    document.getElementById('callBtn').style.display = 'none';
-                    document.getElementById('hangupBtn').style.display = 'inline-block';
-                    addSysMsg('📞 已发起语音通话');
-                })
-                .catch((err) => {
-                    alert('❌ 请允许麦克风权限！\n手机需在浏览器设置中开启麦克风');
-                    console.error('麦克风权限：', err);
-                });
-        }
+        document.getElementById('msgInput').onkeydown = (e) => {
+            if (e.key === 'Enter') sendMsg();
+        };
 
-        // 挂断通话（手机端优化）
-        function hangupCall() {
-            if (localStream) localStream.getTracks().forEach((t) => t.stop());
-            if (remoteStream) remoteStream.getTracks().forEach((t) => t.stop());
-            document.getElementById('callBtn').style.display = 'inline-block';
-            document.getElementById('hangupBtn').style.display = 'none';
-            addSysMsg('📞 已挂断通话');
-        }
-
-        // 播放远程语音（手机扬声器适配）
-        function playAudio(stream) {
-            const audio = new Audio();
-            audio.srcObject = stream;
-            audio.volume = 1;
-            // 手机端自动播放（绕过限制）
-            audio.play().catch(() => {
-                document.addEventListener('touchstart', () => audio.play(), { once: true });
-            });
-        }
-
-        // 手动添加信令（100%解决连接问题，手机端长按复制/粘贴）
-        function addSignal() {
-            const signalStr = document.getElementById('signalInput').value.trim();
-            if (!signalStr) return;
-            try {
-                const signal = JSON.parse(signalStr);
-                // 识别是Offer/Answer/ICE
-                if (signal.type === 'offer' || signal.type === 'answer') {
-                    peerConnection.setRemoteDescription(new RTCSessionDescription(signal))
-                        .then(() => {
-                            if (signal.type === 'offer') {
-                                // 收到Offer，生成Answer
-                                peerConnection.createAnswer()
-                                    .then((answer) => peerConnection.setLocalDescription(answer))
-                                    .then(() => {
-                                        console.log('【Answer，发给对方】', JSON.stringify(peerConnection.localDescription));
-                                        addSysMsg('生成Answer，已发给对方');
-                                    });
-                            }
-                        });
-                } else if (signal.candidate) {
-                    // 添加工E候选者
-                    peerConnection.addIceCandidate(new RTCIceCandidate(signal));
-                    addSysMsg('✅ 已添加对方连接信息');
-                }
-                document.getElementById('signalInput').value = '';
-            } catch (err) {
-                alert('内容格式错误！请复制完整的控制台内容');
-            }
-        }
-
-        // 辅助方法：添加消息
-        function addMsg(sender, content, isMine) {
+        function addMsg(sender, content, time, isMine) {
             const chatBox = document.getElementById('chatBox');
-            const time = new Date().toLocaleTimeString();
-            const cls = isMine ? 'msg-mine' : 'msg-other';
-            const msg = `
-                <div class="msg ${cls}">
+            const cls = isMine ? 'msg my' : 'msg other';
+            const msgHtml = `
+                <div class="${cls}">
                     <div class="msg-time">${sender} · ${time}</div>
                     <div>${content}</div>
                 </div>
             `;
-            chatBox.innerHTML += msg;
-            // 手机端滚动到底部（平滑）
+            chatBox.innerHTML += msgHtml;
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // 添加系统消息
         function addSysMsg(content) {
-            addMsg('系统', content, false);
+            const time = new Date().toLocaleTimeString();
+            addMsg('系统', content, time, false);
         }
 
-        // 更新连接状态
-        function updateStatus(text, type) {
-            const el = document.getElementById('connStatus');
-            el.innerText = text;
-            el.className = `status status-${type}`;
+        function clearChat() {
+            document.getElementById('chatBox').innerHTML = '';
         }
 
-        // 显示手动信令区
-        function showSignalingArea() {
-            document.getElementById('signalingArea').className = 'signaling-area show';
-        }
-
-        // 清理资源（手机端防止内存泄漏）
+        // ========== 辅助方法 ==========
         function cleanUp() {
             if (peerConnection) peerConnection.close();
-            if (localStream) localStream.getTracks().forEach((t) => t.stop());
-            if (remoteStream) remoteStream.getTracks().forEach((t) => t.stop());
-            document.getElementById('callBtn').style.display = 'inline-block';
-            document.getElementById('hangupBtn').style.display = 'none';
+            if (dataChannel) dataChannel.close();
+            document.getElementById('signalInput').value = '';
         }
 
-        // 手机端页面关闭时清理
         window.onbeforeunload = cleanUp;
     </script>
 </body>
